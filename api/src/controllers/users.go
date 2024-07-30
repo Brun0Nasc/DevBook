@@ -1,10 +1,34 @@
 package controllers
 
-import "net/http"
+import (
+	"api/src/database"
+	"api/src/models"
+	"api/src/repositories"
+	"encoding/json"
+	"io"
+	"log"
+	"net/http"
+)
 
 // CreateUser creates a user
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Creating a user"))
+	bodyRequest, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var user models.User
+	if err = json.Unmarshal(bodyRequest, &user); err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	repo := repositories.NewUserRepository(db)
+	repo.CreateUser(user)
 }
 
 // GetUsers gets all users
@@ -22,7 +46,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Updating a user"))
 }
 
-// DeleteUser deletes a user 
+// DeleteUser deletes a user
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Deleting a user"))
 }
