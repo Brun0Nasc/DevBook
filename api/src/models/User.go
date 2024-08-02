@@ -17,8 +17,8 @@ type User struct {
 }
 
 // Prepare will format and validate the user data
-func (user *User) Prepare() (err error){
-	if err = user.validate(); err != nil {
+func (user *User) Prepare(operation string) (err error){
+	if err = user.validate(operation); err != nil {
 		return err
 	}
 
@@ -26,7 +26,7 @@ func (user *User) Prepare() (err error){
 	return
 }
 
-func (user *User) validate() (err error) {
+func (user *User) validate(operation string) (err error) {
 	if user.Name == "" {
 		return errors.New("the field name is required")
 	}
@@ -39,7 +39,7 @@ func (user *User) validate() (err error) {
 		return errors.New("the field email is required")
 	}
 
-	if user.Password == "" {
+	if operation == "create" && user.Password == "" {
 		return errors.New("the field password is required")
 	}
 

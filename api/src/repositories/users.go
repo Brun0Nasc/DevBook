@@ -72,3 +72,17 @@ func (u *Users) GetUser(userID uint64) (user models.User, err error) {
 
 	return
 }
+
+func (u *Users) UpdateUser(userID uint64, user models.User) (err error) {
+	stmt, err := u.db.Prepare("UPDATE users SET username = ?, nickname = ?, email = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.Exec(user.Name, user.Nick, user.Email, userID); err != nil {
+		return err
+	}
+
+	return
+}
