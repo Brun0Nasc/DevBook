@@ -61,3 +61,14 @@ func (u *Users) GetUsers(nameOrNick string) (users []models.User, err error) {
 
 	return
 }
+
+// GetUser gets a user from the database by its ID
+func (u *Users) GetUser(userID uint64) (user models.User, err error) {
+	row := u.db.QueryRow("SELECT id, username, nickname, email, created_at FROM users WHERE id = ?", userID)
+
+	if err = row.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt); err != nil {
+		return models.User{}, err
+	}
+
+	return
+}
