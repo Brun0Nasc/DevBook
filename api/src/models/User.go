@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"github.com/badoux/checkmail"
 	"strings"
 	"time"
 )
@@ -17,7 +18,7 @@ type User struct {
 }
 
 // Prepare will format and validate the user data
-func (user *User) Prepare(operation string) (err error){
+func (user *User) Prepare(operation string) (err error) {
 	if err = user.validate(operation); err != nil {
 		return err
 	}
@@ -37,6 +38,10 @@ func (user *User) validate(operation string) (err error) {
 
 	if user.Email == "" {
 		return errors.New("the field email is required")
+	}
+
+	if err := checkmail.ValidateFormat(user.Email); err != nil {
+		return errors.New("the field email is invalid")
 	}
 
 	if operation == "create" && user.Password == "" {
