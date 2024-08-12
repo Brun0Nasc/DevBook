@@ -1,10 +1,12 @@
 package models
 
 import (
+	"api/src/security"
 	"errors"
-	"github.com/badoux/checkmail"
 	"strings"
 	"time"
+
+	"github.com/badoux/checkmail"
 )
 
 // User represents a user
@@ -23,7 +25,10 @@ func (user *User) Prepare(operation string) (err error) {
 		return err
 	}
 
-	user.format()
+	if err = user.format(operation); err != nil {
+		return err
+	}
+
 	return
 }
 
@@ -51,8 +56,18 @@ func (user *User) validate(operation string) (err error) {
 	return
 }
 
-func (user *User) format() {
+func (user *User) format(operation string) (err error) {
 	user.Name = strings.TrimSpace(user.Name)
 	user.Nick = strings.TrimSpace(user.Nick)
 	user.Email = strings.TrimSpace(user.Email)
+
+	if operation == "create" {
+		hashedPassword, err := security.Hash(user.Password)
+		if err != nil {
+			return err
+		}
+		user.Password = string(hashedPassword)
+	}
+
+	return
 }
