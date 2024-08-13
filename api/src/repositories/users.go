@@ -101,3 +101,17 @@ func (u *Users) DeleteUser(userID uint64) (err error) {
 
 	return
 }
+
+// FindByEmail finds a user by its email
+func (u *Users) FindByEmail(email string) (user models.User, err error) {
+	row := u.db.QueryRow("SELECT id, pass FROM users WHERE email = ?", email)
+	if err = row.Scan(&user.ID, &user.Password); err != nil {
+		if err == sql.ErrNoRows {
+			return models.User{}, fmt.Errorf("no user found with the email %s", email)
+		}
+		
+		return models.User{}, err
+	}
+
+	return
+}
