@@ -9,6 +9,7 @@ import (
 	"api/src/security"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -45,6 +46,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, _ := auth.CreateToken(userFromDB.ID)
-	w.Write([]byte(token))
+	token, err := auth.CreateToken(userFromDB.ID)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	
+	if _, err = w.Write([]byte(token)); err != nil {
+		log.Fatal(err)
+	}
 }

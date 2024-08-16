@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"os"
+	"api/src/config"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -15,7 +15,7 @@ func CreateToken(userID uint64) (token string, err error) {
 	claims["userID"] = userID
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err = jwtToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
-	
+	token, err = jwtToken.SignedString([]byte(config.SecretKey))
+
 	return
 }

@@ -15,6 +15,9 @@ var (
 
 	// Port is the port where the server will run
 	Port = 0
+
+	// SecretKey is used for sign the token
+	SecretKey []byte
 )
 
 // Load initializes enviroment variables
@@ -35,4 +38,6 @@ func Load() {
 		os.Getenv("DB_PASS"),
 		os.Getenv("DB_NAME"),
 	)
+
+	SecretKey = []byte(os.Getenv("JWT_SECRET"))
 }
