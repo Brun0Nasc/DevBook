@@ -11,3 +11,11 @@ CREATE TABLE users(
     pass VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
 ) ENGINE=INNODB;
+
+CREATE TABLE followers(
+    user_id INT NOT NULL,
+    follower_id INT NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(follower_id) REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY(user_id, follower_id)
+) ENGINE=INNODB;
