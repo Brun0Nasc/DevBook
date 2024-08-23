@@ -5,11 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
+
+var errInvalidToken = errors.New("invalid Token")
 
 // CreateToken creates a token for the user
 func CreateToken(userID uint64) (token string, err error) {
@@ -36,7 +39,27 @@ func ValidateToken(r *http.Request) error {
 		return nil
 	}
 
-	return errors.New("invalid Token")
+	return errInvalidToken
+}
+
+// ExtracteUserID returns the user id present on token
+func ExtracteUserID(r *http.Request) (uint64, error) {
+	tokenString := extractToken(r)
+	token, err := jwt.Parse(tokenString, returnVerificationkey)
+	if err != nil {
+		return 0, err
+	}
+
+	if permissions, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID, err := strconv.ParseUint(fmt.Sprintf("%.0f", permissions["userID"]), 10, 64)
+		if err != nil {
+			return 0, err
+		}
+
+		return userID, nil
+	}
+
+	return 0, errInvalidToken
 }
 
 func extractToken(r *http.Request) string {

@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"api/src/auth"
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
@@ -28,7 +30,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = user.Prepare("create"); err != nil {
+	if err = user.Prepare(r.Method); err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
 		return
 	}
@@ -108,6 +110,16 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tokenUserID, err := auth.ExtracteUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != tokenUserID {
+		responses.Error(w, http.StatusForbidden, errors.New("you don't have permission to update another user"))
+	}
+
 	bodyRequest, err := io.ReadAll(r.Body)
 	if err != nil {
 		responses.Error(w, http.StatusUnprocessableEntity, err)
@@ -120,7 +132,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = user.Prepare("update"); err != nil {
+	if err = user.Prepare(r.Method); err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
 		return
 	}

@@ -49,7 +49,7 @@ func (user *User) validate(operation string) (err error) {
 		return errors.New("the field email is invalid")
 	}
 
-	if operation == "create" && user.Password == "" {
+	if operation == "POST" && user.Password == "" {
 		return errors.New("the field password is required")
 	}
 
@@ -61,7 +61,7 @@ func (user *User) format(operation string) (err error) {
 	user.Nick = strings.TrimSpace(user.Nick)
 	user.Email = strings.TrimSpace(user.Email)
 
-	if operation == "create" {
+	if operation == "POST" {
 		hashedPassword, err := security.Hash(user.Password)
 		if err != nil {
 			return err
