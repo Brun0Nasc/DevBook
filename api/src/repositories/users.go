@@ -115,3 +115,18 @@ func (u *Users) FindByEmail(email string) (user models.User, err error) {
 
 	return
 }
+
+// FollowUser allows a user to follow another user
+func (u *Users) FollowUser(userID, followerID uint64) (err error) {
+	stmt, err := u.db.Prepare("INSERT IGNORE INTO followers (user_id, follower_id) VALUES(?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.Exec(userID, followerID); err != nil {
+		return err
+	}
+
+	return
+}
