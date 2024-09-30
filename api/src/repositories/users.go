@@ -130,3 +130,18 @@ func (u *Users) FollowUser(userID, followerID uint64) (err error) {
 
 	return
 }
+
+// UnfollowUser allows a user to unfollow another user
+func (u *Users) UnfollowUser(userID, followerID uint64) (err error) {
+	stmt, err := u.db.Prepare("DELETE FROM followers WHERE user_id = ? AND follower_id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.Exec(userID, followerID); err != nil {
+		return err
+	}
+
+	return
+}
