@@ -146,6 +146,7 @@ func (u *Users) UnfollowUser(userID, followerID uint64) (err error) {
 	return
 }
 
+// GetFollowers gets all followers of a user
 func (u *Users) GetFollowers(userID uint64) (followers []models.User, err error) {
 	rows, err := u.db.Query(`
 		SELECT u.id, u.username, u.nickname, u.email, u.created_at
