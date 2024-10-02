@@ -171,3 +171,29 @@ func (u *Users) GetFollowers(userID uint64) (followers []models.User, err error)
 
 	return
 }
+
+// GetFollowing gets all users that a user is following
+func (u *Users) GetFollowing(userID uint64) (following []models.User, err error) {
+	rows, err := u.db.Query(`
+		SELECT u.id, u.username, u.nickname, u.email, u.created_at
+		FROM users u
+		INNER JOIN followers f ON u.id = f.user_id
+		WHERE f.follower_id = ?
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var user models.User
+
+		if err = rows.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt); err != nil {
+			return nil, err
+		}
+
+		following = append(following, user)
+	}
+
+	return
+}
