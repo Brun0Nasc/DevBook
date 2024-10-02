@@ -109,7 +109,7 @@ func (u *Users) FindByEmail(email string) (user models.User, err error) {
 		if err == sql.ErrNoRows {
 			return models.User{}, fmt.Errorf("no user found with the email %s", email)
 		}
-		
+
 		return models.User{}, err
 	}
 
@@ -193,6 +193,31 @@ func (u *Users) GetFollowing(userID uint64) (following []models.User, err error)
 		}
 
 		following = append(following, user)
+	}
+
+	return
+}
+
+// GetPassword gets a user's password by its ID
+func (u *Users) GetPassword(userID uint64) (password string, err error) {
+	row := u.db.QueryRow("SELECT pass FROM users WHERE id = ?", userID)
+	if err = row.Scan(&password); err != nil {
+		return "", err
+	}
+
+	return
+}
+
+// UpdatePassword updates a user's password
+func (u *Users) UpdatePassword(userID uint64, password string) (err error) {
+	stmt, err := u.db.Prepare("UPDATE users SET pass = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.Exec(password, userID); err != nil {
+		return err
 	}
 
 	return
