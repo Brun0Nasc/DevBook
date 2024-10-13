@@ -19,6 +19,15 @@ CREATE TABLE followers(
     PRIMARY KEY(user_id, follower_id)
 ) ENGINE=INNODB;
 
+CREATE TABLE posts(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(50) NOT NULL,
+    content VARCHAR(300) NOT NULL,
+    author_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=INNODB;
+
 INSERT INTO users (username, nickname, email, pass) VALUES ('user1', 'nick1', 'user1@mail.com', 'user123'),
                                                            ('user2', 'nick2', 'user2@mail.com', 'user123'),
                                                            ('user3', 'nick3', 'user3@mail.com', 'user123'),
