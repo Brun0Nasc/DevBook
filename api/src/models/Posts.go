@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"strings"
+	"time"
+)
 
 // Post represents a post
 type Post struct {
@@ -11,4 +15,32 @@ type Post struct {
 	AuthorNick string    `json:"author_nick,omitempty"`
 	Likes      uint64    `json:"likes"`
 	CreatedAt  time.Time `json:"created_at,omitempty"`
+}
+
+// Prepare will format and validate the post data
+func (p *Post) Prepare() error {
+	if err := p.validate(); err != nil {
+		return err
+	}
+
+	p.format()
+
+	return nil
+}
+
+func (p *Post) validate() error {
+	if p.Title == "" {
+		return errors.New("the field title is required")
+	}
+
+	if p.Content == "" {
+		return errors.New("the field content is required")
+	}
+
+	return nil
+}
+
+func (p *Post) format() {
+	p.Title = strings.TrimSpace(p.Title)
+	p.Content = strings.TrimSpace(p.Content)
 }
