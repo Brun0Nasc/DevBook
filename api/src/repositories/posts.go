@@ -39,7 +39,7 @@ func (r Posts) Create(post models.Post) (uint64, error) {
 // GetByID returns a post by its ID
 func (r Posts) GetByID(postID uint64) (models.Post, error) {
 	rows, err := r.db.Query(`
-		SELECT p.*, u.nick FROM posts p
+		SELECT p.*, u.nickname FROM posts p
 		INNER JOIN users u ON u.id = p.author_id
 		WHERE p.id = ?`,
 		postID)
