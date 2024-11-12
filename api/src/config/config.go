@@ -40,4 +40,5 @@ func Load() {
 	)
 
 	SecretKey = []byte(os.Getenv("JWT_SECRET"))
+	// Test
 }
