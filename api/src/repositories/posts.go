@@ -36,6 +36,39 @@ func (r Posts) Create(post models.Post) (uint64, error) {
 	return uint64(lastID), nil
 }
 
+func (r Posts) Get(userID uint64) ([]models.Post, error) {
+	rows, err := r.db.Query(`
+	SELECT DISTINCT p.*, 
+		   u.nickname 
+	FROM posts p 
+	JOIN users u ON p.author_id = u.id 
+	JOIN followers f ON f.user_id = u.id 
+	WHERE f.follower_id = ? OR u.id = ?;`, userID, userID)
+	if err != nil {
+		return []models.Post{}, err
+	}
+	defer rows.Close()
+
+	var posts []models.Post
+	for rows.Next() {
+		var post models.Post
+		if err = rows.Scan(
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.AuthorID,
+			&post.Likes,
+			&post.CreatedAt,
+			&post.AuthorNick,
+		); err != nil {
+			return []models.Post{}, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}
+
 // GetByID returns a post by its ID
 func (r Posts) GetByID(postID uint64) (models.Post, error) {
 	rows, err := r.db.Query(`
@@ -47,7 +80,7 @@ func (r Posts) GetByID(postID uint64) (models.Post, error) {
 		return models.Post{}, err
 	}
 	defer rows.Close()
-	
+
 	var post models.Post
 	if rows.Next() {
 		if err = rows.Scan(
