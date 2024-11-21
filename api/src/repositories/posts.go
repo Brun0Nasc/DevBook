@@ -184,3 +184,21 @@ func (r Posts) Like(postID uint64) error {
 
 	return nil
 }
+
+// Unlike decrements the likes of a post
+func (r Posts) Unlike(postID uint64) error {
+	stmt, err := r.db.Prepare(
+		`UPDATE posts SET likes = 
+		CASE WHEN likes > 0 THEN likes - 1 ELSE 0 END 
+		WHERE id = ?`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.Exec(postID); err != nil {
+		return err
+	}
+
+	return nil
+}
