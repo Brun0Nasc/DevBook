@@ -36,6 +36,7 @@ func (r Posts) Create(post models.Post) (uint64, error) {
 	return uint64(lastID), nil
 }
 
+// Get returns all posts from followed users and the user itself
 func (r Posts) Get(userID uint64) ([]models.Post, error) {
 	rows, err := r.db.Query(`
 	SELECT DISTINCT p.*, 
@@ -128,4 +129,43 @@ func (r Posts) Delete(postID uint64) error {
 	}
 
 	return nil
+}
+
+// GetByUser returns all posts from a user
+func (r Posts) GetByUser(userID uint64) ([]models.Post, error) {
+	stmt, err := r.db.Prepare(`
+	SELECT p.*, u.nickname
+	FROM posts p
+	INNER JOIN users u ON u.id = p.author_id
+	WHERE p.author_id = ?
+	ORDER BY 1 DESC`)
+	if err != nil {
+		return []models.Post{}, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(userID)
+	if err != nil {
+		return []models.Post{}, err
+	}
+	defer rows.Close()
+
+	var posts []models.Post
+	for rows.Next() {
+		var post models.Post
+		if err = rows.Scan(
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.AuthorID,
+			&post.Likes,
+			&post.CreatedAt,
+			&post.AuthorNick,
+		); err != nil {
+			return []models.Post{}, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, nil
 }
