@@ -41,9 +41,10 @@ func (r Posts) Get(userID uint64) ([]models.Post, error) {
 	SELECT DISTINCT p.*, 
 		   u.nickname 
 	FROM posts p 
-	JOIN users u ON p.author_id = u.id 
-	JOIN followers f ON f.user_id = u.id 
-	WHERE f.follower_id = ? OR u.id = ?;`, userID, userID)
+	INNER JOIN users u ON p.author_id = u.id 
+	INNER JOIN followers f ON f.user_id = u.id 
+	WHERE f.follower_id = ? OR u.id = ?
+	ORDER BY 1 DESC;`, userID, userID)
 	if err != nil {
 		return []models.Post{}, err
 	}
@@ -97,4 +98,19 @@ func (r Posts) GetByID(postID uint64) (models.Post, error) {
 	}
 
 	return post, nil
+}
+
+// Update updates a post in the database
+func (r Posts) Update(postID uint64, post models.Post) error {
+	stmt, err := r.db.Prepare("UPDATE posts SET title = ?, content = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.Exec(post.Title, post.Content, postID); err != nil {
+		return err
+	}
+
+	return nil
 }
