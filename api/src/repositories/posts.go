@@ -169,3 +169,18 @@ func (r Posts) GetByUser(userID uint64) ([]models.Post, error) {
 
 	return posts, nil
 }
+
+// Like increments the likes of a post
+func (r Posts) Like(postID uint64) error {
+	stmt, err := r.db.Prepare("UPDATE posts SET likes = likes + 1 WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.Exec(postID); err != nil {
+		return err
+	}
+
+	return nil
+}
