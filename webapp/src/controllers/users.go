@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -9,7 +12,16 @@ import (
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
-	name := r.FormValue("name")
+	user, err := json.Marshal(map[string]string{
+		"name":     r.FormValue("name"),
+		"nick":     r.FormValue("nick"),
+		"email":    r.FormValue("email"),
+		"password": r.FormValue("password"),
+	})
 
-	fmt.Println(name)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(bytes.NewBuffer(user))
 }
