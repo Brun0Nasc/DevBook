@@ -17,5 +17,11 @@ function createUser(event) {
             nick: $('#nick').val(),
             password: $('#password').val()
         }
-    })
+    }).done(function() {
+        alert("User created successfully!");
+        window.location.href = "/login";
+    }).fail(function(error) {
+        console.log(error);
+        alert("Error creating user!");
+    });
 }
