@@ -9,8 +9,8 @@ import (
 	"api/src/security"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
+	"strconv"
 )
 
 // Login is the controller for the login route
@@ -51,8 +51,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		responses.Error(w, http.StatusInternalServerError, err)
 		return
 	}
-	
-	if _, err = w.Write([]byte(token)); err != nil {
-		log.Fatal(err)
-	}
+
+	userID := strconv.FormatUint(userFromDB.ID, 10)
+
+	responses.JSON(w, http.StatusOK, models.AuthData{ID: userID, Token: token})
 }
