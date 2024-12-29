@@ -14,3 +14,8 @@ func LoadLoginPage(w http.ResponseWriter, r *http.Request) {
 func LoadRegisterUserPage(w http.ResponseWriter, r *http.Request) {
 	utils.ExecuteTemplate(w, "register.html", nil)
 }
+
+// LoadMainPage loads the main page with the posts
+func LoadMainPage(w http.ResponseWriter, r *http.Request) {
+	utils.ExecuteTemplate(w, "home.html", nil)
+}
