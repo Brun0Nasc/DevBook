@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"webapp/src/config"
+	"webapp/src/cookies"
 	"webapp/src/models"
 	"webapp/src/responses"
 )
@@ -40,6 +41,11 @@ func DoLogin(w http.ResponseWriter, r *http.Request) {
 
 	var authData models.AuthData
 	if err = json.NewDecoder(response.Body).Decode(&authData); err != nil {
+		responses.JSON(w, http.StatusUnprocessableEntity, responses.APIError{Error: err.Error()})
+		return
+	}
+
+	if err = cookies.Save(w, authData.ID, authData.Token); err != nil {
 		responses.JSON(w, http.StatusUnprocessableEntity, responses.APIError{Error: err.Error()})
 		return
 	}
