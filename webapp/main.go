@@ -1,16 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"webapp/src/config"
 	"webapp/src/router"
 	"webapp/src/utils"
 )
 
 func main() {
+	config.Load()
+
 	utils.LoadTemplates()
 	r := router.Generate()
-	
-	log.Println("Server started on: http://localhost:3000")
-	log.Fatal(http.ListenAndServe(":3000", r))
+
+	log.Printf("Server started on port %d\n", config.Port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), r))
 }
