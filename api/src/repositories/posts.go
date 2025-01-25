@@ -39,7 +39,7 @@ func (r Posts) Create(post models.Post) (uint64, error) {
 // Get returns all posts from followed users and the user itself
 func (r Posts) Get(userID uint64) ([]models.Post, error) {
 	rows, err := r.db.Query(`
-	SELECT DISTINCT p.*, 
+	SELECT DISTINCT p.id, p.title, p.content, p.author_id, p.likes, p.created_at,
 		   u.nickname 
 	FROM posts p 
 	INNER JOIN users u ON p.author_id = u.id 
@@ -74,7 +74,9 @@ func (r Posts) Get(userID uint64) ([]models.Post, error) {
 // GetByID returns a post by its ID
 func (r Posts) GetByID(postID uint64) (models.Post, error) {
 	rows, err := r.db.Query(`
-		SELECT p.*, u.nickname FROM posts p
+		SELECT p.id, p.title, p.content, p.author_id, p.likes, p.created_at,
+		u.nickname 
+		FROM posts p
 		INNER JOIN users u ON u.id = p.author_id
 		WHERE p.id = ?`,
 		postID)
