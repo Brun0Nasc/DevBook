@@ -25,13 +25,14 @@ CREATE TABLE posts(
     content VARCHAR(300) NOT NULL,
     author_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    likes INT DEFAULT 0,
     FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=INNODB;
 
-INSERT INTO users (username, nickname, email, pass) VALUES ('user1', 'nick1', 'user1@mail.com', 'user123'),
-                                                           ('user2', 'nick2', 'user2@mail.com', 'user123'),
-                                                           ('user3', 'nick3', 'user3@mail.com', 'user123'),
-                                                           ('user4', 'nick4', 'user4@mail.com', 'user123');
+INSERT INTO users (username, nickname, email, pass) VALUES ('user1', 'nick1', 'user1@mail.com', '$2a$10$NS.dlHs4SfUQoPg9cHfX9uayR8NcgI.eLDsckvTF67OvdP6bGPEAq'),
+                                                           ('user2', 'nick2', 'user2@mail.com', '$2a$10$NS.dlHs4SfUQoPg9cHfX9uayR8NcgI.eLDsckvTF67OvdP6bGPEAq'),
+                                                           ('user3', 'nick3', 'user3@mail.com', '$2a$10$NS.dlHs4SfUQoPg9cHfX9uayR8NcgI.eLDsckvTF67OvdP6bGPEAq'),
+                                                           ('user4', 'nick4', 'user4@mail.com', '$2a$10$NS.dlHs4SfUQoPg9cHfX9uayR8NcgI.eLDsckvTF67OvdP6bGPEAq');
 
 INSERT INTO followers (user_id, follower_id) VALUES (1, 2),
                                                     (1, 3),
