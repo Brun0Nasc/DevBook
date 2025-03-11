@@ -43,7 +43,7 @@ func (r Posts) Get(userID uint64) ([]models.Post, error) {
 		   u.nickname 
 	FROM posts p 
 	INNER JOIN users u ON p.author_id = u.id 
-	INNER JOIN followers f ON f.user_id = u.id 
+	LEFT JOIN followers f ON f.user_id = u.id
 	WHERE f.follower_id = ? OR u.id = ?
 	ORDER BY 1 DESC;`, userID, userID)
 	if err != nil {
