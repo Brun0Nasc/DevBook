@@ -11,7 +11,9 @@ import (
 
 // CreateUser calls API to register a user on the database
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	if err := r.ParseForm(); err != nil {
+		responses.JSON(w, http.StatusBadRequest, responses.APIError{Error: err.Error()})
+	}
 
 	user, err := json.Marshal(map[string]string{
 		"name":     r.FormValue("name"),

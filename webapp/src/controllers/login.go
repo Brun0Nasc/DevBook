@@ -13,7 +13,9 @@ import (
 
 // DoLogin
 func DoLogin(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	if err := r.ParseForm(); err != nil {
+		responses.JSON(w, http.StatusBadRequest, responses.APIError{Error: err.Error()})
+	}
 
 	user, err := json.Marshal(map[string]string{
 		"email":    r.FormValue("email"),

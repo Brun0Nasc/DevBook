@@ -12,7 +12,9 @@ import (
 
 // CreatePost calls API to register a new post on the database
 func CreatePost(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	if err := r.ParseForm(); err != nil {
+		responses.JSON(w, http.StatusBadRequest, responses.APIError{Error: err.Error()})
+	}
 
 	post, err := json.Marshal(map[string]string{
 		"title":   r.FormValue("title"),
