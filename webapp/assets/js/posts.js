@@ -1,6 +1,7 @@
 $('#new-post').on('submit', createPost);
 $(document).on('click', '.like-post', likePost)
 $(document).on('click', '.dislike-post', dislikePost)
+$('#update-post').on('click', updatePost)
 
 function createPost(event) {
     event.preventDefault();
@@ -22,51 +23,72 @@ function createPost(event) {
 function likePost(event) {
     event.preventDefault();
 
-    const clieckedElement = $(event.target);
-    const postID = clieckedElement.closest('div').data('post-id');
+    const clickedElement = $(event.target);
+    const postID = clickedElement.closest('div').data('post-id');
 
-    clieckedElement.prop('disabled', true);
+    clickedElement.prop('disabled', true);
     $.ajax({
         url: `/posts/${postID}/like`,
         method: "POST"
     }).done(function() {
-        const countLikes = clieckedElement.next('span');
+        const countLikes = clickedElement.next('span');
         const amountLikes = parseInt(countLikes.text());
 
         countLikes.text(amountLikes + 1);
 
-        clieckedElement.addClass('dislike-post');
-        clieckedElement.addClass('text-danger');
-        clieckedElement.removeClass('like-post');
+        clickedElement.addClass('dislike-post');
+        clickedElement.addClass('text-danger');
+        clickedElement.removeClass('like-post');
     }).fail(function() {
         alert("Erro ao curtir publicação")
     }).always(function() {
-        clieckedElement.prop('disabled', false);
+        clickedElement.prop('disabled', false);
     })
 }
 
 function dislikePost(event) {
     event.preventDefault();
 
-    const clieckedElement = $(event.target);
-    const postID = clieckedElement.closest('div').data('post-id');
+    const clickedElement = $(event.target);
+    const postID = clickedElement.closest('div').data('post-id');
 
-    clieckedElement.prop('disabled', true);
+    clickedElement.prop('disabled', true);
     $.ajax({
         url: `/posts/${postID}/dislike`,
         method: "POST"
     }).done(function() {
-        const countLikes = clieckedElement.next('span');
+        const countLikes = clickedElement.next('span');
         const amountLikes = parseInt(countLikes.text());
 
         countLikes.text(amountLikes - 1);
 
-        clieckedElement.removeClass('dislike-post');
-        clieckedElement.removeClass('text-danger');
-        clieckedElement.addClass('like-post');
+        clickedElement.removeClass('dislike-post');
+        clickedElement.removeClass('text-danger');
+        clickedElement.addClass('like-post');
     }).fail(function() {
         alert("Erro ao descurtir publicação")
     }).always(function() {
-        clieckedElement.prop('disabled', false);
+        clickedElement.prop('disabled', false);
+    })
+}
+
+function updatePost() {
+    $(this).prop('disabled', true);
+
+    const postID = $(this).data('post-id');
+    
+    $.ajax({
+        url: `/posts/${postID}`,
+        method: "PUT",
+        data: {
+            title: $('#title').val(),
+            content: $('#content').val()
+        }
+    }).done(function() {
+        alert("Publicação editada com sucesso")
+    }).fail(function() {
+        alert("Erro ao editar publicação")
+    }).always(function() {
+        $('#update-post').prop('disabled', false)
     })
 }

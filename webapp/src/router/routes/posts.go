@@ -25,9 +25,15 @@ var postsRoutes = []Route{
 		RequestAuth: true,
 	},
 	{
-		URI:         "/posts/{postID}/edit",
+		URI:         "/posts/{postID}/update",
 		Method:      http.MethodGet,
-		Function:    controllers.LoadEditPostPage,
+		Function:    controllers.LoadUpdatePostPage,
+		RequestAuth: true,
+	},
+	{
+		URI:         "/posts/{postID}",
+		Method:      http.MethodPut,
+		Function:    controllers.UpdatePost,
 		RequestAuth: true,
 	},
 }

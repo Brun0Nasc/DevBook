@@ -59,8 +59,8 @@ func LoadMainPage(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// LoadEditPostPage loads the page to edit a post
-func LoadEditPostPage(w http.ResponseWriter, r *http.Request) {
+// LoadUpdatePostPage loads the page to update a post
+func LoadUpdatePostPage(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	postID, err := strconv.ParseUint(params["postID"], 10, 64)
