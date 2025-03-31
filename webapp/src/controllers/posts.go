@@ -5,9 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"webapp/src/config"
 	"webapp/src/requests"
 	"webapp/src/responses"
+
+	"github.com/gorilla/mux"
 )
 
 // CreatePost calls API to register a new post on the database
@@ -28,6 +31,31 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	url := fmt.Sprintf("%s/posts", config.APIURL)
 	response, err := requests.PerformRequestWithAuthentication(r, http.MethodPost, url, bytes.NewBuffer(post))
+	if err != nil {
+		responses.JSON(w, http.StatusInternalServerError, responses.APIError{Error: err.Error()})
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		responses.StatusCodeError(w, response)
+		return
+	}
+
+	responses.JSON(w, response.StatusCode, nil)
+}
+
+// LikePost calls API to like a post
+func LikePost(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	postID, err := strconv.ParseUint(params["postID"], 10, 64)
+	if err != nil {
+		responses.JSON(w, http.StatusBadRequest, responses.APIError{Error: err.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/posts/%d/like", config.APIURL, postID)
+	response, err := requests.PerformRequestWithAuthentication(r, http.MethodPost, url, nil)
 	if err != nil {
 		responses.JSON(w, http.StatusInternalServerError, responses.APIError{Error: err.Error()})
 		return
