@@ -21,6 +21,7 @@ func Configure(router *mux.Router) *mux.Router {
 	routes = append(routes, userRoutes...)
 	routes = append(routes, mainPageRoute)
 	routes = append(routes, postsRoutes...)
+	routes = append(routes, logOutRout)
 
 	for _, route := range routes {
 		if route.RequestAuth {
