@@ -17,6 +17,12 @@ import (
 
 // LoadLoginPage loads the login page
 func LoadLoginPage(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := cookies.Read(r)
+	if cookie["token"] != "" {
+		http.Redirect(w, r, "/home", http.StatusSeeOther)
+		return
+	}
+
 	utils.ExecuteTemplate(w, "login.html", nil)
 }
 
