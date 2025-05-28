@@ -134,5 +134,6 @@ func LoadUserProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := models.GetCompleteUser(userID, r)
+	user, _ := models.GetCompleteUser(userID, r)
+	fmt.Println("User:", user)
 }
