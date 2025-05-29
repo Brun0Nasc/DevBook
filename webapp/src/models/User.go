@@ -113,6 +113,11 @@ func GetFollowers(ch chan<- []User, userID uint64, r *http.Request) {
 		return
 	}
 
+	if followers == nil {
+		ch <- make([]User, 0)
+		return
+	}
+
 	ch <- followers
 }
 
@@ -132,6 +137,11 @@ func GetFollowing(ch chan<- []User, userID uint64, r *http.Request) {
 		return
 	}
 
+	if following == nil {
+		ch <- make([]User, 0)
+		return
+	}
+
 	ch <- following
 }
 
@@ -148,6 +158,11 @@ func GetPosts(ch chan<- []Post, userID uint64, r *http.Request) {
 	var posts []Post
 	if err = json.NewDecoder(response.Body).Decode(&posts); err != nil {
 		ch <- nil
+		return
+	}
+
+	if posts == nil {
+		ch <- make([]Post, 0)
 		return
 	}
 
