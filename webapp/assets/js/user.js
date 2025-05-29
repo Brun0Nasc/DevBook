@@ -17,5 +17,16 @@ function unfollow() {
 }
 
 function follow() {
+    const userId = $(this).data('user-id');
+    $(this).prop('disabled', true);
 
+    $.ajax({
+        url: "/users/${userId}/follow",
+        type: "POST",
+    }).done(function() {
+        window.location = `/users/${userId}`;
+    }).fail(function() {
+        Swal.fire("Oops...", "Something went wrong while trying to follow this user.", "error");
+        $('#follow').prop('disabled', false);
+    })
 }
